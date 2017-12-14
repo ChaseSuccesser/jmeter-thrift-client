@@ -46,7 +46,7 @@ The following artifacts could not be resolved: commons-math3:commons-math3:jar:3
 
 在新建的线程组里面新建Sampler -> Java请求
 
-在出现的窗口中，类名称右边的下拉框里面选择例如`com.ligx.thrift.ThriftSwiftClientTest`类名.
+在出现的窗口中，类名称右边的下拉框里面选择例如`com.ligx.thrift.AbstractThriftSwiftClient`类名.
 
 最后，配置相应的线程数，循环次数，就可以进行压力测试了.
 
