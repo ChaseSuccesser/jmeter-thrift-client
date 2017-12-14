@@ -9,7 +9,4 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.FIELD)
 public @interface ThriftClient {
 
-    String ip() default "127.0.0.1";
-
-    String port();
 }

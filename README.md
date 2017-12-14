@@ -31,6 +31,7 @@ The following artifacts could not be resolved: commons-math3:commons-math3:jar:3
 
 ## 第二步
 写一个Java类，继承`AbstractJavaSamplerClient`.在实现方法里面执行thrift的逻辑.
+例如:`com.ligx.demo.idl.JmeterThriftIdlClient`
 
 
 ## 第三步
@@ -51,8 +52,15 @@ The following artifacts could not be resolved: commons-math3:commons-math3:jar:3
 最后，配置相应的线程数，循环次数，就可以进行压力测试了.
 
 
-参考:
+# 使用
+## 第一种场景: 新建单元测试
 
-http://blog.csdn.net/mn960mn/article/details/50684877
+重复上面的234步骤。
 
-http://www.cnblogs.com/sunshine2016/p/5949395.html
+然后在JMeter里定义ip和port参数。
+
+## 第二种场景: 修改存在的单元测试
+
+重复上面的34步骤。
+
+然后在JMeter里定义ip和port参数。

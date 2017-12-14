@@ -1,23 +1,21 @@
 package com.ligx.thrift;
 
 import com.alibaba.fastjson.JSON;
-import com.facebook.nifty.client.FramedClientConnector;
-import com.facebook.swift.service.ThriftClientManager;
-import com.google.common.net.HostAndPort;
 import com.ligx.annotation.ThriftClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jmeter.protocol.java.sampler.AbstractJavaSamplerClient;
 import org.apache.jmeter.protocol.java.sampler.JavaSamplerContext;
 import org.apache.jmeter.samplers.SampleResult;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TNonblockingSocket;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
-/**
- * Author: ligongxing.
- * Date: 2017年12月13日.
- */
-public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClient implements IThriftClient {
+public abstract class AbstractThriftIdlClient extends AbstractJavaSamplerClient implements IThriftClient {
 
+    private TNonblockingSocket transport;
 
     @Override
     public void setupTest(JavaSamplerContext context) {
@@ -29,9 +27,10 @@ public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClien
             return;
         }
 
-        ThriftClientManager thriftClientManager = new ThriftClientManager();
-
         try {
+            transport = new TNonblockingSocket(ip, Integer.parseInt(port));
+            TProtocol protocol = new TBinaryProtocol(transport);
+
             Class clazz = this.getClass();
             Object instance = clazz.newInstance();
 
@@ -44,13 +43,11 @@ public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClien
                     }
                     Class<?> fieldClass = field.getType();
 
-                    Object obj = thriftClientManager.createClient(
-                            new FramedClientConnector(HostAndPort.fromParts(ip, Integer.parseInt(port))),
-                            fieldClass)
-                            .get();
+                    Constructor fieldClassConstructor = fieldClass.getConstructor(TProtocol.class);
+                    Object fieldClassInstance = fieldClassConstructor.newInstance(protocol);
 
                     field.setAccessible(true);
-                    field.set(instance, obj);
+                    field.set(instance, fieldClassInstance);
                 }
             }
         } catch (Exception e) {
@@ -58,12 +55,16 @@ public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClien
         }
     }
 
+
     @Override
     public SampleResult runTest(JavaSamplerContext javaSamplerContext) {
         SampleResult sampleResult = new SampleResult();
 
         try {
+            transport.open();
+
             Object result = doTest();
+
             sampleResult.setResponseData(JSON.toJSONString(result), "utf-8");
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
@@ -77,5 +78,6 @@ public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClien
     @Override
     public void teardownTest(JavaSamplerContext context) {
         super.teardownTest(context);
+        transport.close();
     }
 }
