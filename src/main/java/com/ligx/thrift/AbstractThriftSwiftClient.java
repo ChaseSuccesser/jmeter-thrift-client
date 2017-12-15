@@ -30,7 +30,7 @@ public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClien
         String port = context.getParameter("port");
         if (StringUtils.isBlank(ip) || StringUtils.isBlank(port)) {
             middleResult.setCode(MiddleStatus.FAIL.getCode());
-            middleResult.setMsg("'ip' or 'port' param is null");
+            middleResult.setMsg(String.format("'ip' or 'port' param is null ip=%s, port=%s", ip, port));
             return;
         }
 
