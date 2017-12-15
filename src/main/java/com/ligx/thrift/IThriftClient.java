@@ -1,6 +1,11 @@
 package com.ligx.thrift;
 
+import com.ligx.enums.MiddleStatus;
+import com.ligx.model.MiddleResult;
+
 public interface IThriftClient {
+
+    MiddleResult middleResult = new MiddleResult(MiddleStatus.SUCCESS.getCode());
 
     /**
      * 实际的测试逻辑写在这里面
