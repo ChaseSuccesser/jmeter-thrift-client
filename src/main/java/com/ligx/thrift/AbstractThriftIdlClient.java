@@ -65,7 +65,7 @@ public abstract class AbstractThriftIdlClient extends AbstractJavaSamplerClient 
 
             Object result = doTest();
 
-            sampleResult.setResponseData(JSON.toJSONString(result), "utf-8");
+            sampleResult.setResponseData(result == null ? "ok" : JSON.toJSONString(result), "utf-8");
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             e.printStackTrace();
