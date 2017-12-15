@@ -1,7 +1,10 @@
 package com.ligx.thrift;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Throwables;
 import com.ligx.annotation.ThriftClient;
+import com.ligx.constants.Constants;
+import com.ligx.enums.MiddleStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jmeter.protocol.java.sampler.AbstractJavaSamplerClient;
 import org.apache.jmeter.protocol.java.sampler.JavaSamplerContext;
@@ -24,6 +27,8 @@ public abstract class AbstractThriftIdlClient extends AbstractJavaSamplerClient 
         String ip = context.getParameter("ip");
         String port = context.getParameter("port");
         if (StringUtils.isBlank(ip) || StringUtils.isBlank(port)) {
+            middleResult.setCode(MiddleStatus.FAIL.getCode());
+            middleResult.setMsg(String.format("'ip' or 'port' param is null ip=%s, port=%s", ip, port));
             return;
         }
 
@@ -51,6 +56,8 @@ public abstract class AbstractThriftIdlClient extends AbstractJavaSamplerClient 
                 }
             }
         } catch (Exception e) {
+            middleResult.setCode(MiddleStatus.FAIL.getCode());
+            middleResult.setMsg(Throwables.getStackTraceAsString(e));
             e.printStackTrace();
         }
     }
@@ -60,15 +67,22 @@ public abstract class AbstractThriftIdlClient extends AbstractJavaSamplerClient 
     public SampleResult runTest(JavaSamplerContext javaSamplerContext) {
         SampleResult sampleResult = new SampleResult();
 
+        if (middleResult.getCode() != MiddleStatus.SUCCESS.getCode()) {
+            sampleResult.setResponseData(middleResult.getMsg(), Constants.ENCODING);
+            sampleResult.setSuccessful(false);
+            return sampleResult;
+        }
+
         try {
             transport.open();
 
             Object result = doTest();
 
-            sampleResult.setResponseData(result == null ? "ok" : JSON.toJSONString(result), "utf-8");
+            sampleResult.setResponseData(result == null ? "ok" : JSON.toJSONString(result), Constants.ENCODING);
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             e.printStackTrace();
+            sampleResult.setResponseData(Throwables.getStackTraceAsString(e), Constants.ENCODING);
             sampleResult.setSuccessful(false);
         }
 

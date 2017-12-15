@@ -3,8 +3,11 @@ package com.ligx.thrift;
 import com.alibaba.fastjson.JSON;
 import com.facebook.nifty.client.FramedClientConnector;
 import com.facebook.swift.service.ThriftClientManager;
+import com.google.common.base.Throwables;
 import com.google.common.net.HostAndPort;
 import com.ligx.annotation.ThriftClient;
+import com.ligx.constants.Constants;
+import com.ligx.enums.MiddleStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jmeter.protocol.java.sampler.AbstractJavaSamplerClient;
 import org.apache.jmeter.protocol.java.sampler.JavaSamplerContext;
@@ -26,6 +29,8 @@ public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClien
         String ip = context.getParameter("ip");
         String port = context.getParameter("port");
         if (StringUtils.isBlank(ip) || StringUtils.isBlank(port)) {
+            middleResult.setCode(MiddleStatus.FAIL.getCode());
+            middleResult.setMsg(String.format("'ip' or 'port' param is null ip=%s, port=%s", ip, port));
             return;
         }
 
@@ -54,6 +59,8 @@ public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClien
                 }
             }
         } catch (Exception e) {
+            middleResult.setCode(MiddleStatus.FAIL.getCode());
+            middleResult.setMsg(Throwables.getStackTraceAsString(e));
             e.printStackTrace();
         }
     }
@@ -62,12 +69,19 @@ public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClien
     public SampleResult runTest(JavaSamplerContext javaSamplerContext) {
         SampleResult sampleResult = new SampleResult();
 
+        if (middleResult.getCode() != MiddleStatus.SUCCESS.getCode()) {
+            sampleResult.setResponseData(middleResult.getMsg(), Constants.ENCODING);
+            sampleResult.setSuccessful(false);
+            return sampleResult;
+        }
+
         try {
             Object result = doTest();
-            sampleResult.setResponseData(result == null ? "ok" : JSON.toJSONString(result), "utf-8");
+            sampleResult.setResponseData(result == null ? "ok" : JSON.toJSONString(result), Constants.ENCODING);
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             e.printStackTrace();
+            sampleResult.setResponseData(Throwables.getStackTraceAsString(e), Constants.ENCODING);
             sampleResult.setSuccessful(false);
         }
 
