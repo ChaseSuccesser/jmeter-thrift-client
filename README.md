@@ -56,16 +56,16 @@ commons-pool2:commons-pool2:jar:2.3: Could not find artifact commons-math3:commo
 
 
 # 如何使用这个项目
-> 1.首先，`git clone git@github.com:ChaseSuccesser/jmeter-thrift-client.git`.
+> 1.首先，`git clone git@github.com:ChaseSuccesser/jmeter-thrift-client.git`.  
 > 2.然后，检查本地是否有上面`第一步`提到的两个jar包，没有的话下载到本地maven仓库中.  
 > 3.接下来，针对要测试的场景，分了下面两类:
 
 ## 第一种场景: 新建单元测试
 
 1. 创建自己的单元测试类  
-> 如果要测试thrift idl接口，就继承`AbstractThriftIdlClient`; 如果要测试thrift swift接口，就继承`AbstractThriftSwiftClient`;  
-> 使用`@ThriftClient`注解标注要调用的thrift client;  
-> 在`doTest()`方法里面编写调用thrift client的真正逻辑;  
+> ①如果要测试thrift idl接口，就继承`AbstractThriftIdlClient`; 如果要测试thrift swift接口，就继承`AbstractThriftSwiftClient`;  
+> ②使用`@ThriftClient`注解标注要调用的thrift client;  
+> ③在`doTest()`方法里面编写调用thrift client的真正逻辑;  
 
 2. 重复上面的`第三步`和`第四步`。
 
