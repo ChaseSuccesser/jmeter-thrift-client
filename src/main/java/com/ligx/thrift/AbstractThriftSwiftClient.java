@@ -22,6 +22,12 @@ import java.lang.reflect.Field;
 public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClient implements IThriftClient {
 
 
+    /**
+     * 读取通过JMeter设置的参数;
+     * 利用反射创建thrift client实例
+     *
+     * @param context
+     */
     @Override
     public void setupTest(JavaSamplerContext context) {
         super.setupTest(context);
@@ -65,6 +71,12 @@ public abstract class AbstractThriftSwiftClient extends AbstractJavaSamplerClien
         }
     }
 
+    /**
+     * JMeter单元测试
+     *
+     * @param javaSamplerContext
+     * @return
+     */
     @Override
     public SampleResult runTest(JavaSamplerContext javaSamplerContext) {
         SampleResult sampleResult = new SampleResult();

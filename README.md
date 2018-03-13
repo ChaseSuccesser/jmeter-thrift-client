@@ -15,11 +15,14 @@
 ```
 
 之后，执行`mvn install`会提示`
-The following artifacts could not be resolved: commons-math3:commons-math3:jar:3.4.1, commons-pool2:commons-pool2:jar:2.3: Could not find artifact commons-math3:commons-math3:jar:3.4.1`
+The following artifacts could not be resolved: 
+commons-math3:commons-math3:jar:3.4.1, 
+commons-pool2:commons-pool2:jar:2.3: Could not find artifact commons-math3:commons-math3:jar:3.4.1`
 
-说是找不到依赖。临时的解决方法是：先下载
-`org.apache.commons:commons-math3:3.4.1`和
-`org.apache.commons:commons-pool2:2.3`
+说是找不到依赖。临时的解决方法是：先下载  
+`org.apache.commons:commons-math3:3.4.1`  
+和  
+`org.apache.commons:commons-pool2:2.3`  
 这两个jar到本地
 
 然后，执行下面的命令，安装到本地maven仓库
@@ -43,7 +46,7 @@ The following artifacts could not be resolved: commons-math3:commons-math3:jar:3
 
 
 ## 第四步
-启动jmeter
+启动JMeter
 
 在新建的线程组里面新建Sampler -> Java请求
 
@@ -52,15 +55,26 @@ The following artifacts could not be resolved: commons-math3:commons-math3:jar:3
 最后，配置相应的线程数，循环次数，就可以进行压力测试了.
 
 
-# 使用
+# 如何使用这个项目
+> 1.首先，`git clone git@github.com:ChaseSuccesser/jmeter-thrift-client.git`.
+> 2.然后，检查本地是否有上面`第一步`提到的两个jar包，没有的话下载到本地maven仓库中.  
+> 3.接下来，针对要测试的场景，分了下面两类:
+
 ## 第一种场景: 新建单元测试
 
-重复上面的234步骤。
+1. 创建自己的单元测试类  
+> 如果要测试thrift idl接口，就继承`AbstractThriftIdlClient`; 如果要测试thrift swift接口，就继承`AbstractThriftSwiftClient`;  
+> 使用`@ThriftClient`注解标注要调用的thrift client;  
+> 在`doTest()`方法里面编写调用thrift client的真正逻辑;  
 
-然后在JMeter里定义ip和port参数。
+2. 重复上面的`第三步`和`第四步`。
 
-## 第二种场景: 修改存在的单元测试
+3. 然后在JMeter里定义ip和port参数。
 
-重复上面的34步骤。
+## 第二种场景: 修改已经存在的单元测试
 
-然后在JMeter里定义ip和port参数。
+1. 修改完已经存在的单元测试类
+
+2. 重复上面的`第三步`和`第四步`。
+
+3. 然后在JMeter里定义ip和port参数。
